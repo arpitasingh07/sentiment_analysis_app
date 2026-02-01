@@ -165,18 +165,6 @@ The model performs particularly well on clearly positive and negative texts. Edg
 3. **Context Length**: Very long texts are truncated to 5000 characters for performance
 4. **Language Support**: Currently supports English only
 
-## Enhancement Possibilities
-
-We have documented several potential enhancements:
-
-1. **Multi-Language Support**: Extend to support sentiment analysis in multiple languages
-2. **Domain-Specific Models**: Create specialized models for healthcare, finance, and educational contexts
-3. **Deep Learning Models**: Implement BERT or RoBERTa for higher accuracy
-4. **Aspect-Based Sentiment**: Analyze sentiment toward specific aspects of a product or service
-5. **Real-Time Social Media Monitoring**: Integration with APIs for live sentiment tracking
-
-For detailed enhancement plan, see TASK_B_ENHANCEMENT.pdf
-
 ## Testing & Validation
 
 We conducted thorough testing including:
@@ -215,17 +203,6 @@ Analyzes text from uploaded file
 2. **NumPy Compatibility**: Required updating to numpy 1.26.0 for Python 3.12 compatibility
 3. **Large File Processing**: Implemented chunking for batch processing of large files
 4. **UI Responsiveness**: Optimized CSS and JavaScript for smooth interaction on slower connections
-
-## Future Work
-
-Potential improvements for future versions:
-
-- Database integration for storing analysis history
-- User authentication and personal sentiment tracking
-- Real-time analytics dashboard
-- API rate limiting for public deployment
-- Docker containerization for easy deployment
-- Caching mechanism for frequently analyzed texts
 
 ## References
 
