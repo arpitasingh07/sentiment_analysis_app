@@ -1,4 +1,4 @@
-# How to Make the App Work Better for Different Industries
+# Enhancement Plan: How to Make the App Work Better for Different Industries
 
 ### Group ID: 61
 
@@ -281,28 +281,6 @@ Real education feedback examples:
 
 ---
 
-## What Do You Need?
-
-### Skills
-
-- Python dictionaries (not hard)
-- Basic NLP ideas
-- REST API understanding
-
-### Tools
-
-- Python (you've got it)
-- A text editor
-- Testing built into the app (already there)
-
-### Data
-
-- 50-100 examples for each domain
-- Some you know are positive, some negative
-- Edge cases and weird stuff to test
-
----
-
 ## Checking If It Works
 
 ### Healthcare
@@ -325,7 +303,7 @@ Real education feedback examples:
 
 ---
 
-## What You Get Out Of This
+## What We Get Out Of This
 
 ### Users Get
 
@@ -339,7 +317,7 @@ Real education feedback examples:
 - Premium version: domain-specific analysis
 - Better product than competitors
 
-### You Learn
+### We Learn
 
 - How domain adaptation works
 - Real NLP problems and solutions
@@ -371,30 +349,15 @@ Real education feedback examples:
 
 ---
 
-## Future Ideas
-
-After you get domains working, consider:
-
-- **Multimodal:** Video + audio + text at once (more complete picture)
-- **Track Over Time:** See how sentiment changes through the course
-- **Learn From Users:** Improve based on user feedback
-- **Explain Decisions:** Show why the model thought it was positive/negative
-- **Languages:** Support multiple languages
-- **More Domains:** Law, product reviews, customer support, dating, etc.
-
----
-
 ## The Big Picture
 
 The main idea: different industries use different words and need different understanding. Take a general sentiment app and make it industry-smart.
 
-Here's what you'll accomplish:
+Here's what we'll accomplish:
 
 1. **More Accurate** - Works way better for actual use cases
 2. **Learn Domain Adaptation** - Important NLP concept everyone uses
 3. **Build Real Value** - Something you could actually sell
 4. **Easy To Expand** - Add new domains whenever you want
-
-The hard part is already done. Now you're just adding the smart layers on top!
 
 ---
