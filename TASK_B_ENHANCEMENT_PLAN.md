@@ -94,110 +94,19 @@ We need to build a list of healthcare-specific words and what they mean. Here's 
 - "intensive" - care you need is necessary, not inherently bad
 - "strong" - medication strength is neutral, not emotional
 
-Here's what the code would look like:
-
-```python
-healthcare_words = {
-    # Good stuff (1.0 = very positive)
-    'effective': 1.0,
-    'improved': 0.9,
-    'recovered': 1.0,
-    'healing': 0.8,
-    'relieved': 0.9,
-    'successful': 0.95,
-    'satisfied': 0.9,
-    'comfortable': 0.8,
-
-    # Bad stuff (-1.0 = very negative)
-    'painful': -0.9,
-    'severe': -0.8,
-    'complications': -1.0,
-    'infection': -1.0,
-    'adverse': -0.9,
-    'side effects': -0.7,
-    'unbearable': -1.0,
-
-    # Depends on context (handle specially)
-    'aggressive': {'treatment': 1.0, 'cancer': -1.0},
-    'intensive': {'care': 0, 'training': 0}
-}
-```
-
 ### Step 2: Update the Analyzer
 
-Now we need to tell the app to use this medical dictionary. We'd add a new function to `app/sentiment_analyzer.py`:
+Now we need to tell the app to use this medical dictionary. We'd add a new function to `app/sentiment_analyzer.py` that:
 
-```python
-def analyze_healthcare(text):
-    """
-    Analyze healthcare reviews using medical terminology
-
-    What it does:
-    1. Gets the base sentiment from VADER
-    2. Finds healthcare-specific words
-    3. Gives them the right scores
-    4. Combines both approaches for best result
-    5. Returns results with medical context
-    """
-
-    # First, get what VADER thinks
-    vader_scores = vader_analyzer.polarity_scores(text)
-
-    # Then, count medical words in the text
-    healthcare_score = 0
-    words_found = []
-
-    for word in healthcare_words:
-        if word in text.lower():
-            words_found.append(word)
-            healthcare_score += healthcare_words[word]
-
-    # Combine both: 70% medical words + 30% VADER
-    # (medical words are more reliable here)
-    final_score = (healthcare_score * 0.7) + (vader_scores['compound'] * 0.3)
-
-    return {
-        'compound': final_score,
-        'positive': vader_scores['pos'],
-        'negative': vader_scores['neg'],
-        'neutral': vader_scores['neu'],
-        'domain': 'healthcare',
-        'keywords': words_found
-    }
-```
+1. Gets the base sentiment from VADER
+2. Finds healthcare-specific words in the text
+3. Gives them appropriate scores
+4. Combines both approaches (medical words weighted at 70%, VADER at 30%)
+5. Returns results with medical context included
 
 ### Step 3: Update the Website
 
-We need to let users pick their industry. Add this to `templates/index.html`:
-
-```html
-<div class="domain-selector">
-  <label>What industry is this for?</label>
-  <select id="domain">
-    <option value="general">General (All Topics)</option>
-    <option value="healthcare">Healthcare (Medical Reviews)</option>
-    <option value="finance">Finance (Stock/Money Talk)</option>
-    <option value="education">Education (Course Feedback)</option>
-  </select>
-</div>
-```
-
-And update `static/js/script.js` to send the domain to the backend:
-
-```javascript
-// Get what the user picked
-const domain = document.getElementById("domain").value;
-
-// Send it along with the text
-const response = await fetch("/api/analyze", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    text: inputText,
-    domain: domain, // <-- include this
-  }),
-});
-```
+We need to let users pick their industry. The website should have a domain selector that lets them choose between General, Healthcare, Finance, or Education. When they send text for analysis, the frontend sends the selected domain along with the text to the backend API.
 
 ### Step 4: Test It Out
 
@@ -254,74 +163,11 @@ Financial sentiment is tricky because same words can mean opposite things:
 
 ### Step 2: Add Market Context to Analysis
 
-Finance analysis gets better when you consider market conditions. Add this function:
-
-```python
-def analyze_finance(text, market_context='neutral'):
-    """
-    Analyze investment/stock sentiment with market awareness
-
-    What it does:
-    1. Gets base sentiment from VADER
-    2. Finds finance-specific words
-    3. Adjusts for current market conditions
-    4. Returns results
-    """
-
-    # Get the base sentiment
-    vader_scores = vader_analyzer.polarity_scores(text)
-
-    # Count finance words
-    finance_score = 0
-    for word in finance_words:
-        if word in text.lower():
-            finance_score += finance_words[word]
-
-    # Adjust based on market context
-    # In a bull market, positive news sounds even better
-    # In a bear market, the same news seems worse
-    if market_context == 'bull':
-        final_score = finance_score * 0.8  # less extreme
-    elif market_context == 'bear':
-        final_score = finance_score * 1.2  # more extreme
-    else:
-        final_score = finance_score * 1.0  # neutral
-
-    # Combine: 60% finance words + 40% VADER
-    final_score = (final_score * 0.6) + (vader_scores['compound'] * 0.4)
-
-    return {
-        'compound': final_score,
-        'keywords_found': [],
-        'domain': 'finance',
-        'market_context': market_context
-    }
-```
+Finance analysis gets better when you consider market conditions. The analyzer should take into account whether we're in a bull market, bear market, or neutral conditions. This adjusts how extreme the sentiment scores should be - the same text means different things depending on market conditions. We combine finance-specific words (60% weight) with VADER sentiment analysis (40% weight).
 
 ### Step 3: Connect to the Backend
 
-Update `app.py` to handle different domains:
-
-```python
-@app.route('/api/analyze', methods=['POST'])
-def analyze():
-    data = request.json
-    text = data.get('text', '')
-    domain = data.get('domain', 'general')
-
-    if domain == 'healthcare':
-        scores = sentiment_analyzer.analyze_healthcare(text)
-    elif domain == 'finance':
-        # Get market context from user (bull/bear/neutral)
-        market_context = data.get('market_context', 'neutral')
-        scores = sentiment_analyzer.analyze_finance(text, market_context)
-    elif domain == 'education':
-        scores = sentiment_analyzer.analyze_education(text)
-    else:
-        scores = sentiment_analyzer.analyze(text)
-
-    return jsonify(scores)
-```
+The backend API endpoint needs to handle different domains. When the frontend sends a request with a domain parameter, the backend calls the appropriate analyzer function (healthcare, finance, education, or general). For finance analysis, it also receives market context information.
 
 ### Step 4: Real World Tests
 
@@ -355,126 +201,41 @@ Education feedback is unique because:
 
 ### Step 1: Analyze Different Aspects
 
-Instead of just "is it positive or negative", break it down:
+Instead of just "is it positive or negative", break it down by aspect. Each feedback could mention:
 
-```python
-education_aspects = {
-    'teaching_quality': {
-        'positive': ['clear', 'engaging', 'helpful', 'knowledgeable', 'patient'],
-        'negative': ['confusing', 'boring', 'unclear', 'rushed', 'hard to follow']
-    },
-    'difficulty_level': {
-        'positive': ['challenging', 'rigorous', 'comprehensive'],
-        'negative': ['too hard', 'too easy', 'overwhelming', 'basic']
-    },
-    'course_materials': {
-        'positive': ['organized', 'comprehensive', 'useful', 'well-structured'],
-        'negative': ['disorganized', 'outdated', 'incomplete', 'confusing']
-    },
-    'pace': {
-        'positive': ['well-paced', 'manageable', 'balanced'],
-        'negative': ['too fast', 'too slow', 'rushed', 'dragging']
-    }
-}
-```
+- **Teaching quality:** Does the instructor explain things well?
+- **Difficulty level:** Is the course challenging, too easy, or overwhelming?
+- **Course materials:** Are assignments and resources well organized?
+- **Pace:** Is the course moving at a reasonable speed?
+
+Score each aspect separately so teachers and administrators get a more complete picture.
 
 ### Step 2: Figure Out What Type of Feedback It Is
 
-Is it praise? A suggestion? A complaint? That matters:
+Is it praise? A suggestion? A complaint? That matters because they need different action:
 
-```python
-def categorize_feedback(text):
-    """
-    Categorize feedback as: praise, suggestion, or complaint
-    """
+- **Praise:** Student is happy with this aspect
+- **Suggestion:** Student sees room for improvement
+- **Complaint:** Student is unhappy and might need help
+- **Neutral:** Just stating facts
 
-    praise_words = ['great', 'excellent', 'love', 'amazing', 'best', 'perfect']
-    suggestion_words = ['could', 'should', 'suggest', 'maybe', 'consider', 'improve']
-    complaint_words = ['bad', 'poor', 'hate', 'terrible', 'worst', 'problem']
-
-    text_lower = text.lower()
-
-    if any(word in text_lower for word in praise_words):
-        return 'praise'
-    elif any(word in text_lower for word in suggestion_words):
-        return 'suggestion'
-    elif any(word in text_lower for word in complaint_words):
-        return 'complaint'
-    else:
-        return 'neutral'
-```
+Look for signal words to categorize the feedback type.
 
 ### Step 3: Put It All Together
 
-Add this analysis function to `sentiment_analyzer.py`:
+The education analyzer combines:
 
-```python
-def analyze_education(text):
-    """
-    Analyze course/education feedback with aspect analysis
-
-    What it does:
-    1. Gets base sentiment from VADER
-    2. Looks at each aspect separately
-    3. Figures out if it's praise/suggestion/complaint
-    4. Returns detailed breakdown
-    """
-
-    # Get the base sentiment
-    vader_scores = vader_analyzer.polarity_scores(text)
-
-    # Score each aspect
-    aspect_scores = {}
-    for aspect, keywords in education_aspects.items():
-        positive_count = sum(1 for word in keywords['positive'] if word in text.lower())
-        negative_count = sum(1 for word in keywords['negative'] if word in text.lower())
-
-        # Simple calculation: more positive words = higher score
-        aspect_score = (positive_count - negative_count) / max(positive_count + negative_count, 1)
-        aspect_scores[aspect] = aspect_score
-
-    # Figure out feedback type
-    feedback_type = categorize_feedback(text)
-
-    return {
-        'compound': vader_scores['compound'],
-        'positive': vader_scores['pos'],
-        'negative': vader_scores['neg'],
-        'neutral': vader_scores['neu'],
-        'domain': 'education',
-        'aspect_scores': aspect_scores,
-        'feedback_type': feedback_type
-    }
-```
+1. Base sentiment from VADER
+2. Individual aspect scores (teaching, difficulty, materials, pace)
+3. Feedback type classification (praise/suggestion/complaint)
+4. Returns a detailed breakdown so teachers and admins can see exactly what needs improvement
 
 ### Step 4: Different Output for Different People
 
-Teachers care about different things than administrators. Format the results accordingly:
+Teachers care about different things than administrators:
 
-```python
-def format_education_result(scores, audience='teacher'):
-    """
-    Show results in a way that's useful for the audience
-    """
-
-    if audience == 'teacher':
-        # Teachers want to know which aspect to improve
-        worst_aspect = min(scores['aspect_scores'],
-                          key=scores['aspect_scores'].get)
-        return {
-            'overall': scores['compound'],
-            'aspects': scores['aspect_scores'],
-            'type': scores['feedback_type'],
-            'focus_on': f"Consider improving: {worst_aspect}"
-        }
-    elif audience == 'admin':
-        # Admins want to know if action is needed
-        return {
-            'overall': scores['compound'],
-            'feedback_type': scores['feedback_type'],
-            'needs_action': scores['feedback_type'] in ['complaint', 'suggestion']
-        }
-```
+- **Teachers:** Want to know which specific aspect to improve. Show them the lowest-scoring aspect and focus their attention there.
+- **Admins:** Want to know if action is needed. Flag feedback that's complaints or suggestions so admin knows when to follow up.
 
 ### Step 5: Test It Out
 

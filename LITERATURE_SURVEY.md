@@ -500,7 +500,7 @@ The model says: "Positive"
 
 ### 5.1 The Hard Stuff
 
-1. **Sarcasm** 😏
+1. **Sarcasm**
    - "Oh great, another meeting" (sounds positive but is negative)
    - Needs world knowledge - you gotta understand context
    - Best systems only get 65-70% accuracy
