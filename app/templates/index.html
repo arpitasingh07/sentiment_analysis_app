@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentiment Analysis Application</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <h1>Sentiment Analysis Application</h1>
+          <p class="subtitle">
+            Analyze the sentiment of your text using Natural Language Processing
+          </p>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Tab Navigation -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="text-input">
+            Text Input
+          </button>
+          <button class="tab-btn" data-tab="file-upload">File Upload</button>
+          <button class="tab-btn" data-tab="batch-analysis">
+            Batch Analysis
+          </button>
+        </div>
+
+        <!-- Tab 1: Text Input -->
+        <section id="text-input" class="tab-content active">
+          <div class="input-section">
+            <h2>Enter Your Text</h2>
+            <textarea
+              id="textInput"
+              placeholder="Enter text here... (up to 5000 characters)"
+              rows="6"
+            ></textarea>
+            <div class="input-footer">
+              <span id="charCount">0 / 5000</span>
+              <button id="analyzeBtn" class="btn btn-primary">
+                Analyze Sentiment
+              </button>
+            </div>
+
+            <!-- Left Column Result Display -->
+            <div
+              id="leftColumnResult"
+              class="left-column-result"
+              style="display: none"
+            >
+              <h3>Quick Result</h3>
+              <div class="quick-sentiment" id="quickSentiment"></div>
+              <h3 style="margin-top: 20px">Preprocessed Text</h3>
+              <div class="quick-preprocessed" id="quickPreprocessed"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 2: File Upload -->
+        <section id="file-upload" class="tab-content">
+          <div class="upload-section">
+            <h2>Upload Text File</h2>
+            <div class="upload-area" id="uploadArea">
+              <svg class="upload-icon" viewBox="0 0 24 24">
+                <path
+                  d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
+                />
+              </svg>
+              <p>Drag and drop your .txt file here</p>
+              <p class="or">or</p>
+              <input
+                type="file"
+                id="fileInput"
+                accept=".txt"
+                style="display: none"
+              />
+              <button id="browseBtn" class="btn btn-secondary">
+                Browse Files
+              </button>
+              <p class="file-info">Supported: .txt files (up to 16MB)</p>
+            </div>
+            <div id="uploadStatus" class="upload-status"></div>
+
+            <!-- Left Column Result Display for File Upload -->
+            <div
+              id="leftColumnFileResult"
+              class="left-column-result"
+              style="display: none"
+            >
+              <h3>Quick Result</h3>
+              <div class="quick-sentiment" id="quickFilesentiment"></div>
+              <h3 style="margin-top: 20px">Preprocessed Text</h3>
+              <div class="quick-preprocessed" id="quickFilePreprocessed"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 3: Batch Analysis -->
+        <section id="batch-analysis" class="tab-content">
+          <div class="batch-section">
+            <h2>Batch Analysis</h2>
+            <p>Analyze multiple texts at once (up to 50 texts)</p>
+            <textarea
+              id="batchInput"
+              placeholder="Enter texts separated by empty lines&#10;&#10;Text 1&#10;&#10;Text 2&#10;&#10;Text 3"
+              rows="8"
+            ></textarea>
+            <button id="batchAnalyzeBtn" class="btn btn-primary">
+              Analyze All
+            </button>
+          </div>
+        </section>
+
+        <!-- Results Section -->
+        <section
+          class="results-section"
+          id="resultsSection"
+          style="display: none"
+        >
+          <h2>Analysis Results</h2>
+
+          <!-- Loading Spinner -->
+          <div
+            id="loadingSpinner"
+            class="loading-spinner"
+            style="display: none"
+          >
+            <div class="spinner"></div>
+            <p>Analyzing sentiment...</p>
+          </div>
+
+          <!-- Single Result -->
+          <div id="singleResult" class="result-container" style="display: none">
+            <!-- Visualization Section -->
+            <div class="visualization-section">
+              <h3>Sentiment Visualization</h3>
+              <div class="charts-grid">
+                <!-- Pie Chart -->
+                <div class="chart-container">
+                  <h4>Score Distribution</h4>
+                  <canvas id="sentimentChart"></canvas>
+                </div>
+                <!-- Bar Chart -->
+                <div class="chart-container">
+                  <h4>Component Breakdown</h4>
+                  <canvas id="barChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Compound Score Gauge -->
+            <div class="gauge-container">
+              <h3>Overall Sentiment Score</h3>
+              <div class="sentiment-gauge">
+                <div class="gauge-fill" id="gaugeFill"></div>
+                <div class="gauge-labels">
+                  <span>Negative</span>
+                  <span>Neutral</span>
+                  <span>Positive</span>
+                </div>
+              </div>
+              <div class="gauge-value" id="gaugeValue">0.0</div>
+            </div>
+
+            <!-- Confidence -->
+            <div class="confidence-container">
+              <h3>Confidence Level</h3>
+              <div class="confidence-bar">
+                <div class="confidence-fill" id="confidenceFill"></div>
+              </div>
+              <span id="confidencePercent">0%</span>
+            </div>
+
+            <!-- Sentiment Indicators -->
+            <div class="indicators-container">
+              <h3>Key Indicators</h3>
+              <div id="indicatorsContent" class="indicators-content"></div>
+            </div>
+          </div>
+
+          <!-- Batch Results -->
+          <div id="batchResults" class="batch-results" style="display: none">
+            <div class="batch-summary" id="batchSummary"></div>
+            <div id="batchResultsList"></div>
+          </div>
+
+          <!-- Error Message -->
+          <div
+            id="errorMessage"
+            class="error-message"
+            style="display: none"
+          ></div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>&copy; 2026 Sentiment Analysis Application | NLP Assignment 2</p>
+        <p>Built with Flask, NLTK VADER, and HTML5</p>
+      </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
