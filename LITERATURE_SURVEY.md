@@ -223,13 +223,13 @@ The following table summarizes these approaches, highlighting their core ideas, 
 
 | Approach                         | Key Idea                                      | Strengths                           | Weaknesses                                   | Typical Accuracy      |
 |----------------------------------|-----------------------------------------------|--------------------------------------|-----------------------------------------------|------------------------|
-| **Lexicon-Based**                | Use polarity dictionaries (positive/negative words) | No training needed; interpretable     | Fails on domain-specific words, sarcasm       | 70–75%                |
-| **Machine Learning (SVM, NB)**   | Train classifier on labeled data              | Good baselines, fast                 | Large accuracy drop across domains            | 75–85%                |
-| **Pivot Features (SCL)**         | Map shared words to align domains             | Reduces domain shift                 | Limited when vocab overlap is small           | +5–10% improvement    |
-| **Spectral Feature Alignment (SFA)** | Cluster domain-specific & domain-shared words | Good for multi-domain datasets       | High computational cost                       | +8–12% improvement    |
-| **Adversarial Learning (DANN)**  | Learn domain-invariant features               | Strong cross-domain performance      | Training instability                          | 80–85%                |
-| **Transformers (BERT)**          | Pretrained on huge corpora; fine-tuned        | Best performance across domains      | Requires GPU                                  | 90–95%                |
-| **Few-Shot (GPT-3/4 type)**      | Learn from just examples in prompt            | Zero training cost                   | Needs large LLM                               | 90–98%                |
+| **Lexicon-Based**                | Use polarity dictionaries (positive/negative words) | No training needed; interpretable     | Fails on domain-specific words, sarcasm       | 70-75%                |
+| **Machine Learning (SVM, NB)**   | Train classifier on labeled data              | Good baselines, fast                 | Large accuracy drop across domains            | 75-85%                |
+| **Pivot Features (SCL)**         | Map shared words to align domains             | Reduces domain shift                 | Limited when vocab overlap is small           | +5-10% improvement    |
+| **Spectral Feature Alignment (SFA)** | Cluster domain-specific & domain-shared words | Good for multi-domain datasets       | High computational cost                       | +8-12% improvement    |
+| **Adversarial Learning (DANN)**  | Learn domain-invariant features               | Strong cross-domain performance      | Training instability                          | 80-85%                |
+| **Transformers (BERT)**          | Pretrained on huge corpora; fine-tuned        | Best performance across domains      | Requires GPU                                  | 90-95%                |
+| **Few-Shot (GPT-3/4 type)**      | Learn from just examples in prompt            | Zero training cost                   | Needs large LLM                               | 90-98%                |
 
 
 
