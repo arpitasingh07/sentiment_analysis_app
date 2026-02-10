@@ -20,9 +20,32 @@ Sentiment analysis (also called opinion mining) is basically figuring out whethe
 
 ### 1.2 The Cross-Domain Problem
 
-Here's the tricky part: if you train a model on movie reviews, it might not work well on product reviews or restaurant reviews. The vocabularies and writing styles are different across domains. This problem is called "domain adaptation" or "cross-domain sentiment analysis" (Blitzer et al., 2007).
+If you train a model on movie reviews, it might not work well on product reviews or restaurant reviews. The vocabularies and writing styles are different across domains. This problem is called "domain adaptation" or "cross-domain sentiment analysis" (Blitzer et al., 2007).
 
 **Example:** A model trained on movie reviews may not perform well when analyzing product reviews, restaurant reviews, or healthcare feedback. The vocabularies, writing styles, and sentiment indicators differ significantly across domains.
+
+**Problem Formalization**
+
+In cross-domain sentiment analysis, we generally work with two domains:
+
+Source Domain (Ds) – where labeled sentiment data is available
+
+Target Domain (Dt) – where little or no labeled data exists
+
+Let:
+Ds = {(xi, yi)} be labelled examples
+Dt = {xj} be unlabelled examples
+Ps(x) and Pt(x) be the feature distributions in each domain
+
+
+The core problem arises because:
+Ps(x)≠ Pt(x) (feature distribution shift)
+
+and often: Ps(y|x)≠ Pt(y|x) (sentiment meaning changes across domains)
+
+Goal: Learn a sentiment classifier f(x) using labeled source data such that it performs well on the target domain even though the target data comes from a different distribution.
+This captures the central challenge of cross-domain sentiment analysis:
+Models trained in one domain do not generalize well to another due to domain mismatch.
 
 ### 1.3 Why Should We Care?
 
@@ -133,7 +156,16 @@ Cross-domain sentiment analysis is important for practical reasons:
 
 ### 2.2 Solving the Cross-Domain Problem
 
-#### 2.2.1 Smart Feature Learning (Domain Adaptation)
+### 2.2.1 Types of Domain Adaptation 
+
+Cross-domain sentiment analysis research generally evaluates methods under four adaptation settings:
+
+- Unsupervised Domain Adaptation (UDA): No target labels; most common research setting.
+- Semi-Supervised Domain Adaptation: A small number of labeled target samples improve adaptation (Zhu, 2015).
+- Multi-Source Domain Adaptation: Multiple domains help the model generalize better (Mansour et al., 2009).
+- Zero-Shot Domain Adaptation: Model must perform on unseen domains with zero examples (Wang et al., 2021).
+
+#### 2.2.2 Smart Feature Learning (Domain Adaptation)
 
 **The Study:** Blitzer et al. (2007) - "Biographies, Bollywood, Boom-boxes and Blenders: Domain Adaptation for Sentiment Classification"
 
@@ -148,7 +180,7 @@ Cross-domain sentiment analysis is important for practical reasons:
 
 ---
 
-#### 2.2.2 Using Adversarial Training
+#### 2.2.3 Using Adversarial Training
 
 **The Study:** Glorot et al. (2011) - "Domain-Adversarial Training of Neural Networks"
 
@@ -165,7 +197,7 @@ Because of this "fight", the sentiment network learns features that work no matt
 
 ---
 
-#### 2.2.3 Pre-trained Language Models (The Game Changer)
+#### 2.2.4 Pre-trained Language Models (The Game Changer)
 
 **The Big Discovery:** Radford et al. (2018) - "Language Models are Unsupervised Multitask Learners" (GPT)
 
@@ -183,6 +215,15 @@ Because of this "fight", the sentiment network learns features that work no matt
 3. The word meanings learned capture relationships that transfer
 
 **Real numbers:** Fine-tuned BERT gets over 90% accuracy on sentiment across totally different domains, sometimes with as few as 100-200 labeled examples.
+
+### Overview of Key Cross-Domain Methods
+
+To better understand how different research approaches tackle the cross-domain sentiment problem, it is useful to compare the major techniques proposed over the years. Each method tries to solve the same core issue-the distribution gap between the source and target domains but they approach it in different ways. Earlier methods such as lexicon-based and classical machine learning techniques focused on direct word polarity or statistical learning, while later approaches introduced smarter feature alignment techniques like Pivot Features (SCL) and Spectral Feature Alignment (SFA) to reduce domain mismatch. More recent innovations, including adversarial learning (DANN) and pre-trained transformers like BERT, aim to learn domain-invariant representations that generalize across different types of text.
+The following table summarizes these approaches, highlighting their core ideas, strengths, weaknesses, and typical performance in cross-domain settings.
+
+<img width="2202" height="800" alt="image" src="https://github.com/user-attachments/assets/5fe0ba25-9c17-4bd6-a656-2b3fbfae9686" />
+
+
 
 ---
 
@@ -397,7 +438,7 @@ The model says: "Positive"
 | 2018-2024 | Pre-trained Models | 90-95%   | Really well        | Not much           |
 | 2024+     | Large Language Mod | 90-98%   | Amazingly          | A bit better       |
 
-**Key Trend:** We get better accuracy AND better cross-domain performance over time!
+**Key Trend:** We get better accuracy AND better cross-domain performance over time
 
 ### 3.2 Why Some Methods Work Better Across Domains
 
