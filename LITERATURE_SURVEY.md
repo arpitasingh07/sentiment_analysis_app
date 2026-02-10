@@ -221,7 +221,15 @@ Because of this "fight", the sentiment network learns features that work no matt
 To better understand how different research approaches tackle the cross-domain sentiment problem, it is useful to compare the major techniques proposed over the years. Each method tries to solve the same core issue-the distribution gap between the source and target domains but they approach it in different ways. Earlier methods such as lexicon-based and classical machine learning techniques focused on direct word polarity or statistical learning, while later approaches introduced smarter feature alignment techniques like Pivot Features (SCL) and Spectral Feature Alignment (SFA) to reduce domain mismatch. More recent innovations, including adversarial learning (DANN) and pre-trained transformers like BERT, aim to learn domain-invariant representations that generalize across different types of text.
 The following table summarizes these approaches, highlighting their core ideas, strengths, weaknesses, and typical performance in cross-domain settings.
 
-<img width="2202" height="800" alt="image" src="https://github.com/user-attachments/assets/5fe0ba25-9c17-4bd6-a656-2b3fbfae9686" />
+| Approach                         | Key Idea                                      | Strengths                           | Weaknesses                                   | Typical Accuracy      |
+|----------------------------------|-----------------------------------------------|--------------------------------------|-----------------------------------------------|------------------------|
+| **Lexicon-Based**                | Use polarity dictionaries (positive/negative words) | No training needed; interpretable     | Fails on domain-specific words, sarcasm       | 70–75%                |
+| **Machine Learning (SVM, NB)**   | Train classifier on labeled data              | Good baselines, fast                 | Large accuracy drop across domains            | 75–85%                |
+| **Pivot Features (SCL)**         | Map shared words to align domains             | Reduces domain shift                 | Limited when vocab overlap is small           | +5–10% improvement    |
+| **Spectral Feature Alignment (SFA)** | Cluster domain-specific & domain-shared words | Good for multi-domain datasets       | High computational cost                       | +8–12% improvement    |
+| **Adversarial Learning (DANN)**  | Learn domain-invariant features               | Strong cross-domain performance      | Training instability                          | 80–85%                |
+| **Transformers (BERT)**          | Pretrained on huge corpora; fine-tuned        | Best performance across domains      | Requires GPU                                  | 90–95%                |
+| **Few-Shot (GPT-3/4 type)**      | Learn from just examples in prompt            | Zero training cost                   | Needs large LLM                               | 90–98%                |
 
 
 
